@@ -7,9 +7,7 @@ class GetHotNewsBloc {
   final BehaviorSubject<ArticleResponse> _subject =
       BehaviorSubject<ArticleResponse>();
 
-  // Perbarui pemanggilan ke getTopHeadlines
   getHotNews() async {
-    // Gantilah pemanggilan getHotNews ke getTopHeadlines
     ArticleResponse response = await _repository.getTopHeadlines();
     _subject.sink.add(response);
   }
