@@ -3,6 +3,7 @@ import 'package:newsapp/login_signup/Authentication/signup.dart';
 import 'package:newsapp/login_signup/JsonModels/users.dart';
 import 'package:newsapp/login_signup/SQLite/sqlite.dart';
 import 'package:newsapp/news/screens/main_screen.dart';
+import 'package:newsapp/main.dart'; // import fungsi notifikasi
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -27,7 +28,9 @@ class _LoginScreenState extends State<LoginScreen> {
     );
     if (res == true) {
       if (!mounted) return;
-      Navigator.push(
+      await showLoginNotification(); // Panggil notifikasi setelah login berhasil
+      // Navigasi langsung ke MainScreen tanpa popup dialog
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => MainScreen()),
       );
@@ -35,6 +38,21 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         isLoginTrue = true;
       });
+      // Tampilkan popup gagal
+      showDialog(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: const Text('Login Gagal'),
+              content: const Text('Username atau password salah.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+      );
     }
   }
 
