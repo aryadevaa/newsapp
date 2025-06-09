@@ -1,15 +1,23 @@
+import 'package:bcrypt/bcrypt.dart';
 import 'package:newsapp/login_signup/JsonModels/users.dart';
-import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
 
 class DatabaseHelper {
   final databaseName = "news.db";
   String users =
-      "create table users (usrId INTEGER PRIMARY KEY AUTOINCREMENT, usrName TEXT UNIQUE, usrPassword TEXT)";
+      "CREATE TABLE users (usrId INTEGER PRIMARY KEY AUTOINCREMENT, usrName TEXT UNIQUE, usrPassword TEXT)";
 
+  // Fungsi untuk menginisialisasi database
   Future<Database> initDB() async {
-    final databasePath = await getDatabasesPath();
-    final path = join(databasePath, databaseName);
+    // Mendapatkan path penyimpanan eksternal yang aman
+    final directory =
+        await getExternalStorageDirectory(); // Direkomendasikan untuk Android 10+
+    final path = join(
+      directory!.path,
+      databaseName,
+    ); // Menyimpan di folder aplikasi di penyimpanan eksternal
 
     return openDatabase(
       path,
@@ -20,28 +28,42 @@ class DatabaseHelper {
     );
   }
 
-  //Login Method
+  // Login Method
   Future<bool> login(Users user) async {
     final Database db = await initDB();
 
     var result = await db.rawQuery(
-      "select * from users where usrName = '${user.usrName}' AND usrPassword = '${user.usrPassword}'",
+      "SELECT * FROM users WHERE usrName = ?",
+      [user.usrName], // Parameterized query untuk menghindari SQL Injection
     );
+
     if (result.isNotEmpty) {
-      return true;
-    } else {
-      return false;
+      String storedHash = result.first['usrPassword'] as String;
+      if (BCrypt.checkpw(user.usrPassword, storedHash)) {
+        return true; // Login berhasil
+      }
     }
+    return false; // Login gagal
   }
 
-  //Sign up
+  // Sign up Method
   Future<int> signup(Users user) async {
     final Database db = await initDB();
+
+    // Cek apakah username sudah ada
+    var existingUser = await getUser(user.usrName);
+    if (existingUser != null) {
+      throw Exception('Username already taken');
+    }
+
+    // Hash password sebelum disimpan
+    String hashedPassword = BCrypt.hashpw(user.usrPassword, BCrypt.gensalt());
+    user = Users(usrName: user.usrName, usrPassword: hashedPassword);
 
     return db.insert('users', user.toMap());
   }
 
-  //Get User
+  // Get User Method
   Future<Users?> getUser(String usrName) async {
     final Database db = await initDB();
 

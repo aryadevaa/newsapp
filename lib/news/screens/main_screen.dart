@@ -30,6 +30,7 @@ class _MainScreenState extends State<MainScreen> {
           backgroundColor: Style.Colors.mainColor,
           centerTitle: true,
           title: Text("NewsApp", style: TextStyle(color: Colors.white)),
+          automaticallyImplyLeading: false,
         ),
       ),
       body: SafeArea(
