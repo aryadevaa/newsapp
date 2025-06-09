@@ -125,16 +125,6 @@ class _StationRecommendationPageState extends State<StationRecommendationPage> {
       );
     }
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.orange,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text('Rekomendasi Stasiun TV Terdekat'),
-        centerTitle: true,
-        elevation: 0,
-      ),
       backgroundColor: const Color(0xFFF9F9F9),
       body: ListView.builder(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
