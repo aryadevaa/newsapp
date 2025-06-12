@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:newsapp/login_signup/Authentication/login.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:newsapp/login_signup/user_repository.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
+final UserRepository userRepository = UserRepository();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Hive and SharedPreferences
+  await userRepository.init();
 
   // Inisialisasi plugin notifikasi
   const AndroidInitializationSettings initializationSettingsAndroid =

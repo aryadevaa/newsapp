@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:newsapp/login_signup/Authentication/login.dart';
 import 'package:newsapp/login_signup/JsonModels/users.dart';
-import 'package:newsapp/login_signup/SQLite/sqlite.dart';
+import 'package:newsapp/main.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -145,25 +145,39 @@ class _SignUpState extends State<SignUp> {
                       color: Color.fromARGB(226, 246, 80, 29),
                     ),
                     child: TextButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (formKey.currentState!.validate()) {
-                          //Login method will be here
-                          final db = DatabaseHelper();
-                          db
-                              .signup(
-                                Users(
-                                  usrName: username.text,
-                                  usrPassword: password.text,
-                                ),
-                              )
-                              .whenComplete(() {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const LoginScreen(),
+                          bool success = await userRepository.register(
+                            Users(
+                              usrName: username.text,
+                              usrPassword: password.text,
+                            ),
+                          );
+                          
+                          if (success) {
+                            if (!mounted) return;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LoginScreen(),
+                              ),
+                            );
+                          } else {
+                            if (!mounted) return;
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Registrasi Gagal'),
+                                content: const Text('Username sudah digunakan.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(),
+                                    child: const Text('OK'),
                                   ),
-                                );
-                              });
+                                ],
+                              ),
+                            );
+                          }
                         }
                       },
                       child: const Text(

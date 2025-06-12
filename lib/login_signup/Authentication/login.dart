@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:newsapp/login_signup/Authentication/signup.dart';
 import 'package:newsapp/login_signup/JsonModels/users.dart';
-import 'package:newsapp/login_signup/SQLite/sqlite.dart';
 import 'package:newsapp/news/screens/main_screen.dart';
 import 'package:newsapp/main.dart'; // import fungsi notifikasi
 
@@ -20,10 +19,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool isLoginTrue = false;
 
-  final db = DatabaseHelper();
-
   login() async {
-    var res = await db.login(
+    var res = await userRepository.login(
       Users(usrName: username.text, usrPassword: password.text),
     );
     if (res == true) {
