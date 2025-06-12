@@ -25,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
     if (res == true) {
       if (!mounted) return;
-      await showLoginNotification(); // Panggil notifikasi setelah login berhasil
+      await showLoginNotification(username.text); // kirim username
       // Navigasi langsung ke MainScreen tanpa popup dialog
       Navigator.pushReplacement(
         context,

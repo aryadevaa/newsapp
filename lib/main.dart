@@ -25,7 +25,7 @@ void main() async {
 }
 
 // Fungsi untuk menampilkan notifikasi
-Future<void> showLoginNotification() async {
+Future<void> showLoginNotification(String username) async {
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
         'login_channel', // id
@@ -41,7 +41,7 @@ Future<void> showLoginNotification() async {
   await flutterLocalNotificationsPlugin.show(
     0,
     '🎉 Login Berhasil',
-    'Welcome to NewsApp!',
+    'Welcome to NewsApp ($username)',
     platformChannelSpecifics,
   );
 }

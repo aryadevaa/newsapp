@@ -144,7 +144,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             radius: 50,
                             backgroundImage: _profileImagePath != null
                                 ? FileImage(File(_profileImagePath!))
-                                : AssetImage('assets/img/profile.jpg') as ImageProvider,
+                                : null,
+                            child: _profileImagePath == null
+                                ? Icon(Icons.person, size: 50, color: Colors.grey[400])
+                                : null,
                           ),
                           Positioned(
                             bottom: 0,
