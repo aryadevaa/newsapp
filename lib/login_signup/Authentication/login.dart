@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:newsapp/login_signup/Authentication/signup.dart';
 import 'package:newsapp/login_signup/JsonModels/users.dart';
 import 'package:newsapp/news/screens/main_screen.dart';
-import 'package:newsapp/main.dart'; // import fungsi notifikasi
+import 'package:newsapp/main.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -25,8 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
     if (res == true) {
       if (!mounted) return;
-      await showLoginNotification(username.text); // kirim username
-      // Navigasi langsung ke MainScreen tanpa popup dialog
+      await showLoginNotification(username.text);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => MainScreen()),

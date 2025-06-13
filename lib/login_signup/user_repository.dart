@@ -74,12 +74,37 @@ class UserRepository {
   }
 
   // Update user profile
-  Future<bool> updateProfile(String username, String newNama) async {
-    Map<dynamic, dynamic>? userData = _userBox.get(username);
+  Future<bool> updateProfile(String currentUsername, String newUsername, String newNama) async {
+    Map<dynamic, dynamic>? userData = _userBox.get(currentUsername);
     if (userData != null) {
-      userData['nama'] = newNama;
-      await _userBox.put(username, userData);
-      return true;
+      // If username is being changed, check if new username already exists
+      if (currentUsername != newUsername) {
+        if (await getUser(newUsername) != null) {
+          return false; // New username already exists
+        }
+        
+        // Create new entry with new username
+        Map<String, dynamic> newUserData = Map<String, dynamic>.from(userData);
+        newUserData['usrName'] = newUsername;
+        newUserData['nama'] = newNama;
+        
+        // Save new entry and delete old one
+        await _userBox.put(newUsername, newUserData);
+        await _userBox.delete(currentUsername);
+        
+        // Update current user in SharedPreferences if this is the logged in user
+        String? currentUser = await getCurrentUser();
+        if (currentUser == currentUsername) {
+          await _prefs.setString(_currentUserKey, newUsername);
+        }
+        
+        return true;
+      } else {
+        // Only update nama if username hasn't changed
+        userData['nama'] = newNama;
+        await _userBox.put(currentUsername, userData);
+        return true;
+      }
     }
     return false;
   }

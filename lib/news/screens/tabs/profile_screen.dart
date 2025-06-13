@@ -19,6 +19,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? _currentUsername;
   String? _currentNama;
   final TextEditingController _namaController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   bool _isEditing = false;
   String? _profileImagePath;
   final ImagePicker _picker = ImagePicker();
@@ -46,6 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _currentUsername = username;
         _currentNama = user?.nama;
         _namaController.text = user?.nama ?? username;
+        _usernameController.text = username;
         _profileImagePath = imagePath;
       });
     }
@@ -55,15 +57,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (_currentUsername != null) {
       bool success = await userRepository.updateProfile(
         _currentUsername!,
+        _usernameController.text,
         _namaController.text,
       );
       if (success) {
         setState(() {
+          _currentUsername = _usernameController.text;
           _currentNama = _namaController.text;
           _isEditing = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Profil berhasil diperbarui')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Username sudah digunakan')),
         );
       }
     }
@@ -119,6 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void dispose() {
     _accelerometerSubscription.cancel();
     _namaController.dispose();
+    _usernameController.dispose();
     super.dispose();
   }
 
@@ -132,7 +141,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               SizedBox(height: 16),
-              // Centered Profile Image, Name, NIM
               Center(
                 child: Column(
                   children: [
@@ -200,10 +208,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             _isEditing = true;
                           });
                         },
-                        child: Text('Edit Profil', style: TextStyle(color: Colors.deepPurple)),
+                        child: Text('Edit Profile', style: TextStyle(color: Colors.deepPurple)),
                       )
                     : Column(
                         children: [
+                          TextField(
+                            controller: _usernameController,
+                            decoration: InputDecoration(
+                              labelText: 'Username',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          SizedBox(height: 10),
                           TextField(
                             controller: _namaController,
                             decoration: InputDecoration(
@@ -220,6 +236,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   setState(() {
                                     _isEditing = false;
                                     _namaController.text = _currentNama ?? '';
+                                    _usernameController.text = _currentUsername ?? '';
                                   });
                                 },
                                 child: Text('Batal'),
@@ -279,7 +296,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               SizedBox(height: 20),
-              // Tombol konversi mata uang dan waktu
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -290,7 +306,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Text('Menu Tambahan'),
               ),
               SizedBox(height: 10),
-              // Tombol Logout
               ElevatedButton(
                 onPressed: () async {
                   await userRepository.logout();

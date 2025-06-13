@@ -41,7 +41,7 @@ Future<void> showLoginNotification(String username) async {
   await flutterLocalNotificationsPlugin.show(
     0,
     '🎉 Login Berhasil',
-    'Welcome to NewsApp ($username)',
+    'Welcome to NewsApp $username',
     platformChannelSpecifics,
   );
 }
